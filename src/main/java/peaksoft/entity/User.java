@@ -1,0 +1,43 @@
+package peaksoft.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class User  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1)
+    private Long id;
+    @Column( unique = true)
+    private String userName;
+    private String password;
+    @Column(unique = true)
+    private String email;
+    private String phoneNumber;
+
+    @OneToOne(cascade = {REMOVE, PERSIST, MERGE, REFRESH})
+    private UserInfo userInfo;
+
+    @OneToOne(cascade = {REMOVE, PERSIST, MERGE})
+    private Follower follower;
+
+    @OneToMany(mappedBy = "user", cascade = {REMOVE}, fetch = FetchType.EAGER)
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {REMOVE})
+    private List<Comment> comments = new ArrayList<>();
+}
